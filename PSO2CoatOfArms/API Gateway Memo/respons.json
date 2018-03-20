@@ -1,0 +1,5 @@
+﻿#set($item = $input.path('$.Item'))
+{
+  "UpdateTime": "$item.UpdateTime.S",
+  "StringList": "$item.StringList.SS"
+}

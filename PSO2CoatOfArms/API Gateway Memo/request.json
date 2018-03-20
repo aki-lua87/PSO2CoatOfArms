@@ -1,0 +1,8 @@
+﻿{
+  "TableName": "common",
+  "Key": {
+    "ProjectName": {
+      "S": "PSO2CoatOfArms"
+    }
+  }
+}
