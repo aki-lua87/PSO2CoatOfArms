@@ -24,35 +24,44 @@ namespace PSO2CoatOfArms
 
         private static readonly AmazonDynamoDBClient Client = new AmazonDynamoDBClient(RegionEndpoint.APNortheast1);
 
-        public void FunctionHandler(ILambdaContext context)
+        public bool FunctionHandler(ILambdaContext context)
         {
-            var dbContext = new DynamoDBContext(Client);
-
-            var dbContents = new TableValue();
-            dbContents.ProjectName = projectName;
-
-            var html = (new HttpClient()).GetStringAsync(pso2Url).Result;
-
-            var doc = new HtmlDocument();
-            doc.OptionAutoCloseOnEnd = false;
-            doc.OptionCheckSyntax = false;
-            doc.OptionFixNestedTags = true;
-
-            //サイト全体の読み込み
-            doc.LoadHtml(html);
-
-            var events = doc.DocumentNode.SelectNodes($"//th[@class='sub']");
-
-            dbContents.StringList = new List<string>();
-            foreach (var eventNode in events)
+            try
             {
-                context.Logger.Log(eventNode.InnerHtml);
-                dbContents.StringList.Add(eventNode.InnerHtml);
-            }
-            dbContents.UpdateTime = DateTime.UtcNow.ToString();
+                var dbContext = new DynamoDBContext(Client);
 
-            var insertTask = dbContext.SaveAsync(dbContents);
-            insertTask.Wait();
+                var dbContents = new TableValue();
+                dbContents.ProjectName = projectName;
+
+                var html = (new HttpClient()).GetStringAsync(pso2Url).Result;
+
+                var doc = new HtmlDocument();
+                doc.OptionAutoCloseOnEnd = false;
+                doc.OptionCheckSyntax = false;
+                doc.OptionFixNestedTags = true;
+
+                //サイト全体の読み込み
+                doc.LoadHtml(html);
+
+                var events = doc.DocumentNode.SelectNodes($"//th[@class='sub']");
+
+                dbContents.StringList = new List<string>();
+                foreach (var eventNode in events)
+                {
+                    context.Logger.Log(eventNode.InnerHtml);
+                    dbContents.StringList.Add(eventNode.InnerHtml);
+                }
+                dbContents.UpdateTime = DateTime.UtcNow.ToString();
+
+                var insertTask = dbContext.SaveAsync(dbContents);
+                insertTask.Wait();
+            }
+            catch (Exception e)
+            {
+                return false;
+            }
+            return true;
+
         }
     }
 
