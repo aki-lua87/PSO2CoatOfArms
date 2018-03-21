@@ -28,6 +28,8 @@ namespace PSO2CoatOfArms
         {
             try
             {
+                var discordURL = Environment.GetEnvironmentVariable("DiscordURL");
+
                 var dbContext = new DynamoDBContext(Client);
 
                 var dbContents = new TableValue();
@@ -55,14 +57,42 @@ namespace PSO2CoatOfArms
 
                 var insertTask = dbContext.SaveAsync(dbContents);
                 insertTask.Wait();
+
+                // åãâ ÇDiscordÇ÷ìäçe
+                var postText = "Lambda Function Execute \n";
+                postText += $"ProjectName : {dbContents.ProjectName} \n";
+                //postText += "targetList : \n";
+                //foreach (var targetName in dbContents.StringList)
+                //{
+                //    postText += $"{targetName} \n";
+                //}
+                postText += $"ExecuteTime : {dbContents.UpdateTime}";
+
+                using (var client = new HttpClient())
+                {
+                    context.Logger.Log(postText);
+                    var discordContent = JsonConvert.SerializeObject(new DiscordMessage(postText));
+                    var stringContent = new StringContent(discordContent, Encoding.UTF8, "application/json");
+                    var _ = client.PostAsync(discordURL, stringContent).Result;
+                }
             }
             catch (Exception e)
             {
+                context.Logger.Log(e.ToString());
                 return false;
             }
             return true;
 
         }
+    }
+
+    public class DiscordMessage
+    {
+        public DiscordMessage(string value)
+        {
+            this.content = value;
+        }
+        public string content { get; set; }
     }
 
     [DynamoDBTable("common")]
