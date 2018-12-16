@@ -59,14 +59,12 @@ namespace PSO2CoatOfArms
                 insertTask.Wait();
 
                 // 結果をDiscordへ投稿
-                var postText = "Lambda Function Execute \n";
-                postText += $"ProjectName : {dbContents.ProjectName} \n";
-                //postText += "targetList : \n";
-                //foreach (var targetName in dbContents.StringList)
-                //{
-                //    postText += $"{targetName} \n";
-                //}
-                postText += $"ExecuteTime : {dbContents.UpdateTime}";
+                var postText = "王者の紋章取得バッチ結果 \n";
+                foreach (var targetName in dbContents.StringList)
+                {
+                    postText += $"{targetName} \n";
+                }
+                postText += $"\n 実行時間(UTC) : {dbContents.UpdateTime}";
 
                 using (var client = new HttpClient())
                 {
