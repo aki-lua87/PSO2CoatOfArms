@@ -20,7 +20,7 @@ namespace PSO2CoatOfArms
     public class Function
     {
         const string projectName = "PSO2CoatOfArms";
-        const string pso2Url = "http://pso2.jp/players/news/i_hget/";
+        const string pso2Url = "http://pso2.jp/players/news/i_oget/";
 
         private static readonly AmazonDynamoDBClient Client = new AmazonDynamoDBClient(RegionEndpoint.APNortheast1);
 
