@@ -20,7 +20,7 @@ namespace PSO2CoatOfArms
     public class Function
     {
         const string projectName = "PSO2CoatOfArms";
-        const string pso2Url = "http://pso2.jp/players/news/i_oget/";
+        const string pso2Url = "http://pso2.jp/players/news/i_yget/";
 
         private static readonly AmazonDynamoDBClient Client = new AmazonDynamoDBClient(RegionEndpoint.APNortheast1);
 
@@ -59,7 +59,7 @@ namespace PSO2CoatOfArms
                 insertTask.Wait();
 
                 // 結果をDiscordへ投稿
-                var postText = "王者の紋章取得バッチ結果 \n";
+                var postText = "勇者の紋章取得バッチ結果 \n";
                 foreach (var targetName in dbContents.StringList)
                 {
                     postText += $"{targetName} \n";
